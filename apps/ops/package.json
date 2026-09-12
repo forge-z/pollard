@@ -1,0 +1,28 @@
+{
+  "name": "@pollard/ops",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "eve dev",
+    "build": "eve build",
+    "start": "eve start --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/deepseek": "3.0.44",
+    "@ai-sdk/openai-compatible": "3.0.48",
+    "@pollard/core": "*",
+    "@workflow/world-postgres": "5.0.0-beta.42",
+    "ai": "7.0.99",
+    "eve": "0.54.3",
+    "pg": "^8.16.3",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

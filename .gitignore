@@ -1,0 +1,15 @@
+node_modules/
+.output/
+.eve/
+.nitro/
+dist/
+*.log
+.env
+.env.local
+.DS_Store
+coverage/
+.workflow-data/
+apps/*/.output/
+apps/*/.eve/
+apps/*/.nitro/
+packages/*/dist/

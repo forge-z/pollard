@@ -84,6 +84,12 @@ as ferramentas necessárias à sua função.
 - Definir os valores operacionais de timeout, retry, schedules e retenção após
   a validação do fluxo mínimo.
 
-Este documento é um plano inicial, não uma especificação fechada. Qualquer
-decisão dependente do Eve ou da API deve ser baseada na documentação e nos
-contratos reais antes da implementação.
+## Decisões confirmadas no Eve
+
+- Eve `0.54.3`, Node 24, `eve build && eve start`.
+- Estado durável: `experimental.workflow.world = "@workflow/world-postgres"` (`5.0.0-beta.42`).
+- Telegram: `telegramChannel` em `agent/channels/telegram.ts`, rota `POST /eve/v1/telegram`.
+- Schedules: `defineSchedule` em `agent/schedules/`. Radar/Editor usam `markdown`; Ops usa `run` sem LLM.
+- Ferramentas padrão desligadas com `defaultTools: false`.
+- Healthcheck: `GET /eve/v1/health`.
+- DeepSeek via `@ai-sdk/deepseek` em `defineAgent({ model })`, não pela AI Gateway.

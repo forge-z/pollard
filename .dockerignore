@@ -1,0 +1,11 @@
+node_modules
+.git
+.output
+.eve
+.nitro
+.env
+*.md
+!README.md
+apps/*/.output
+apps/*/.eve
+dist

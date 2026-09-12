@@ -1,0 +1,146 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pollard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pollard}
+      POSTGRES_DB: ${POSTGRES_DB:-pollard}
+    volumes:
+      - pollard-pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pollard -d pollard"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+
+  radar:
+    build:
+      context: .
+      args:
+        APP: radar
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POLLARD_APP: radar
+      POLLARD_AGENT: radar
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard
+      WORKFLOW_POSTGRES_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard_radar
+      WORKFLOW_TARGET_WORLD: "@workflow/world-postgres"
+      WORKFLOW_POSTGRES_JOB_PREFIX: radar_
+      AI_PROVIDER: ${AI_PROVIDER:-deepseek}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      SEARXNG_URL: ${SEARXNG_URL:-}
+      RSS_FEEDS: ${RSS_FEEDS:-}
+      PUBLISH_MODE: ${PUBLISH_MODE:-draft}
+      TELEGRAM_BOT_TOKEN: ${RADAR_TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET_TOKEN: ${RADAR_TELEGRAM_WEBHOOK_SECRET_TOKEN:-}
+      TELEGRAM_BOT_USERNAME: ${RADAR_TELEGRAM_BOT_USERNAME:-}
+      TELEGRAM_CHAT_ID: ${RADAR_TELEGRAM_CHAT_ID:-}
+      ROUTE_AUTH_BASIC_USER: ${ROUTE_AUTH_BASIC_USER:-}
+      ROUTE_AUTH_BASIC_PASSWORD: ${ROUTE_AUTH_BASIC_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/eve/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    ports:
+      - "3001:3000"
+
+  editor:
+    build:
+      context: .
+      args:
+        APP: editor
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POLLARD_APP: editor
+      POLLARD_AGENT: editor
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard
+      WORKFLOW_POSTGRES_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard_editor
+      WORKFLOW_TARGET_WORLD: "@workflow/world-postgres"
+      WORKFLOW_POSTGRES_JOB_PREFIX: editor_
+      AI_PROVIDER: ${AI_PROVIDER:-deepseek}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      PUBLISH_MODE: ${PUBLISH_MODE:-draft}
+      USINAGEM360_API_URL: ${USINAGEM360_API_URL:-}
+      USINAGEM360_API_KIND: ${USINAGEM360_API_KIND:-wordpress}
+      USINAGEM360_API_USER: ${USINAGEM360_API_USER:-}
+      USINAGEM360_API_PASSWORD: ${USINAGEM360_API_PASSWORD:-}
+      USINAGEM360_API_TOKEN: ${USINAGEM360_API_TOKEN:-}
+      TELEGRAM_BOT_TOKEN: ${EDITOR_TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET_TOKEN: ${EDITOR_TELEGRAM_WEBHOOK_SECRET_TOKEN:-}
+      TELEGRAM_BOT_USERNAME: ${EDITOR_TELEGRAM_BOT_USERNAME:-}
+      TELEGRAM_CHAT_ID: ${EDITOR_TELEGRAM_CHAT_ID:-}
+      ROUTE_AUTH_BASIC_USER: ${ROUTE_AUTH_BASIC_USER:-}
+      ROUTE_AUTH_BASIC_PASSWORD: ${ROUTE_AUTH_BASIC_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/eve/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    ports:
+      - "3002:3000"
+
+  ops:
+    build:
+      context: .
+      args:
+        APP: ops
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POLLARD_APP: ops
+      POLLARD_AGENT: ops
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard
+      WORKFLOW_POSTGRES_URL: postgres://${POSTGRES_USER:-pollard}:${POSTGRES_PASSWORD:-pollard}@postgres:5432/pollard_ops
+      WORKFLOW_TARGET_WORLD: "@workflow/world-postgres"
+      WORKFLOW_POSTGRES_JOB_PREFIX: ops_
+      AI_PROVIDER: ${AI_PROVIDER:-deepseek}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-v4-flash}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      RADAR_HEALTH_URL: http://radar:3000
+      EDITOR_HEALTH_URL: http://editor:3000
+      SEARXNG_URL: ${SEARXNG_URL:-}
+      USINAGEM360_API_URL: ${USINAGEM360_API_URL:-}
+      USINAGEM360_API_KIND: ${USINAGEM360_API_KIND:-wordpress}
+      TELEGRAM_BOT_TOKEN: ${OPS_TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET_TOKEN: ${OPS_TELEGRAM_WEBHOOK_SECRET_TOKEN:-}
+      TELEGRAM_BOT_USERNAME: ${OPS_TELEGRAM_BOT_USERNAME:-}
+      TELEGRAM_CHAT_ID: ${OPS_TELEGRAM_CHAT_ID:-}
+      ROUTE_AUTH_BASIC_USER: ${ROUTE_AUTH_BASIC_USER:-}
+      ROUTE_AUTH_BASIC_PASSWORD: ${ROUTE_AUTH_BASIC_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/eve/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    ports:
+      - "3003:3000"
+
+volumes:
+  pollard-pgdata:
