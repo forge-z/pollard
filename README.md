@@ -12,6 +12,8 @@ Três aplicações Eve independentes:
 
 Prioridade: qualidade editorial → confiabilidade → simplicidade → baixo custo.
 
+**Manual completo de uso e setup (pt-BR):** [MANUAL.md](./MANUAL.md)
+
 ## Requisitos
 
 - Node.js 24
