@@ -1,0 +1,19 @@
+{
+  "name": "pollard",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "node --test --experimental-strip-types tests/*.test.ts",
+    "typecheck": "tsc --noEmit -p packages/core/tsconfig.json && npm run typecheck --workspaces --if-present",
+    "build:radar": "npm run build -w @pollard/radar",
+    "build:editor": "npm run build -w @pollard/editor",
+    "build:ops": "npm run build -w @pollard/ops"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

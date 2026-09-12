@@ -1,0 +1,22 @@
+{
+  "name": "@pollard/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./model": "./src/model.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/deepseek": "3.0.44",
+    "@ai-sdk/openai-compatible": "3.0.48",
+    "ai": "7.0.99",
+    "fast-xml-parser": "^5.2.5",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "@types/pg": "^8.15.5",
+    "typescript": "^5.9.2"
+  }
+}
